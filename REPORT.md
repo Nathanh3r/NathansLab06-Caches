@@ -17,9 +17,9 @@ For each program I tested
 
 We then varied cache size and associativity. We only used the LRU replacement policy for the main tests we ran.
 
-#Steps 
+##Procedure
 
-We first built the executables using CMake and we then ran valgrind lackey to gather the memeory traces.
+We first built the executables using CMake and we then ran valgrind lackey to gather the memory traces.
 After this we then used the filter given with 'awk' into these:
 
 -LI = full caches
@@ -35,13 +35,14 @@ We then simulated the cache in verilog while switching the parameters:
 This allowed us to track misses, total accesses, and miss rate for each configuration used.
 This was then submitted into google docs to allow for better understanding of the info gathered.
 
-Graph of cache Performance: 
+##Graph of cache Performance: 
 From this data we obtained a graph for the program matrix_col using the full cache LI and LRU replacement policy.
 
+![Cache Performance Graph](graph.png)
 
-Through the graph we were able to determine that the miss rate decreases as the chche size increases for all associativity leevels. We also find that increasing associativity also lowers the miss rate but the improvement becomes smaller at higher associativity especially when going from 4 way to 8 way.
+Through the graph we were able to visualize that the miss rate decreases as the cache size increases for all associativity levels. We also find that increasing associativity also lowers the miss rate but the improvement becomes smaller at higher associativity especially when going from 4 way to 8 way.
 
-#cost model
+##Cost model
 
 In order to compare the performance against the cost we used the model given inside the lab.
 
@@ -65,27 +66,24 @@ when doubling associativivity we have an increase cost by 10%
 ###Total cost
 
 for a single cache we have 
-cost = size factor * associativity factor 
-
-so for example if we have 4-way 8192 then 
-8*1.21 = 9.68
+cost = size factor * associativity factor
 
 For split caches the total cost is the sum of the data cache cost and instruction cache cost.
 
 ## Best Full Cache Configuration
 
-When using LI traces we found the lowest miss rate full cache configuratiton for all foru programs was:
+When using LI traces we found the lowest miss rate full cache configuratiton for all four programs was:
 
 8 way, 16384, LRU
 
-which resulted in 
+which resulted in the misse rates:
 
 -hello_c = 3.95%
 - hello_cpp = 1.60%
 - matrix_row = 1.47%
 - matrix_col = 1.47%
 
-We found through the data collected that this gave the best raw performance but was also the most expesnive full cache option.
+We found through the data collected that this gave the best raw performance but was also the most expensive full cache option.
 
 ## Best Cost-Effective Full Cache
 
@@ -93,7 +91,7 @@ The best strong cost effective full cache configuration was
 
 4-way, 8192, LRU
 
-Results:
+Which gave the Miss Rates:
 - hello_c = 4.74%
 - hello_cpp = 2.19%
 - matrix_row = 1.95%
@@ -102,17 +100,17 @@ Results:
 Cost:
 - 8 × 1.21 = 9.68
 
-Using this configuration allowed slight higher miss rates than the largest 8-way cache but it cost less and still did very well.
+Using this configuration allowed for slightly higher miss rates than the largest 8-way cache but it cost less and still did very well.
 
 ## Split Cache Analysis
-We then compared split caches with a full cache and we combined the data cache and instruction cache results:
+We then took split caches and compared them to a full cache. To do this the results from the data cache and instruction cache were combined using the formula below:
 
 combined miss rate = (L misses + I misses) / (L accesses + I accesses)
 
-A strong split-cache configuration from my results was:
+A strong split-cache configuration found from the data collected was:
 
-- Data cache:** 4-way, 8192, LRU
-- Instruction cache:** 4-way, 8192, LRU
+- Data cache: 4-way, 8192, LRU
+- Instruction cache: 4-way, 8192, LRU
 
 ### Combined split-cache results
 
@@ -154,39 +152,39 @@ So total split-cache cost is:
 The best full-cache configuration we tested was:
 
 - 8-way, 16384, LRU
-- Cost = `21.296`
+- Cost = 21.296
 
 The split-cache configuration above was:
 
-- 4-way, 8192 data + 4-way, 8192 instruction
-- Cost = `19.36`
+- 4-way, 8192 data + 4-way, 8192 instruction cache
+- Cost = 19.36
 
-This split configuration was cheaper and had miss rates very close to the best full-cache configuration. In every program, the split cache stayed close to the best full-cache miss rate while using less total cost. This makes it a very good cost-performance tradeoff.
+This split configuration was cheaper and had miss rates very close to the best full-cache configuration. In every program the split cache stayed close to the best full-cache miss rate while using less total cost. This makes it a very good cost-performance tradeoff.
 
-## Observations Across the Four Programs
+## Repeated Trends found Across the Four Programs
 
 A few consistent trends appeared in all four executables:
 
 - Increasing cache size always reduced miss rate.
-- Increasing associativity also reduced miss rate, but the improvement became smaller at higher associativity.
-- The difference between 4-way and 8-way associativity was often small compared to the added cost.
+- Increasing associativity also reduced miss rate, but the improvement became smaller the higher the associativity.
+- The difference between 4-way and 8-way associativity was pretty small compared to the added cost.
 - Instruction caches had much lower miss rates than data caches, especially at larger cache sizes.
-- hello_cpp had a much larger trace than hello_c, but both showed the same overall cache trends.
+- hello_cpp had a much larger trace than hello_c, but both showed the same cache trends.
 - matrix_row and matrix_col had very similar miss-rate behavior in my results.
-- The graph clearly shows diminishing returns when associativity increases from 4-way to 8-way.
+- The graph shows that going from 4-way to 8-way associativity only gives a small improvement in miss rate.
 
 ## Best Overall Configuration
 
-The best absolute performance came from:
+The best raw performance came from:
 
 - 8-way, 16384, LRU
 
-However, the best overall cost-effective configuration** was:
+However, the best most cost-effective configuration was:
 
 - Split cache: 4-way, 8192 data cache + 4-way, 8192 instruction cache, both using LRU
 
-I chose this configuration because it gave miss rates that were very close to the best full-cache results while costing less.
+I chose this configuration because it gave miss rates that were very close to the best full-cache results while still costing less.
 
 ## Conclusion
 
-This lab showed that larger caches and higher associativity reduce miss rate, but the lowest miss rate is not always the best design once cost is considered. Although an 8-way, 16384 full cache gave the best raw performance, a split-cache design with 4-way, 8192 instruction and data caches was the best balance between low cost and good performance. Overall, the results showed clear diminishing returns at very large cache sizes and high associativity, which is why cost-effective cache design matters.
+This lab showed that larger caches and higher associativity reduce miss rate, but the lowest miss rate is not always the best design once cost is considered. Although an 8-way, 16384 full cache gave the best raw performance, a split-cache design with 4-way, 8192 instruction and data caches was the best balance between low cost and good performance. Overall, the results showed that while increasing cache size and associativity helps reduce miss rates, the gain is not as large at higher values, which makes cost-effective cache design important.
