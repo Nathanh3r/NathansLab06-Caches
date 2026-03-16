@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <chrono>
 #include <iomanip>
-
+//change the hello.mem to hello.i.mem make sure to change this or it wont work
 void matrix_vector_multiply(uint64_t *y, uint64_t *A, uint64_t *x, size_t size) {
   size_t i, j;
 
